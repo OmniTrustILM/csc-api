@@ -19,7 +19,7 @@
         <version.bc>1.83</version.bc>
         <version.jjwt>0.13.0</version.jjwt>
         <version.commons-text>1.15.0</version.commons-text>
-        <version.springdoc>2.8.15</version.springdoc>
+        <version.springdoc>2.8.17</version.springdoc>
         <version.springdoc-openapi-ui>1.8.0</version.springdoc-openapi-ui>
         <version.postgresql>42.7.10</version.postgresql>
         <version.mysql>9.6.0</version.mysql>
