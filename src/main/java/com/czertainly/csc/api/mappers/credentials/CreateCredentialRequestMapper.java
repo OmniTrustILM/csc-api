@@ -56,6 +56,12 @@ public class CreateCredentialRequestMapper {
             usePreGeneratedKey = false;
         }
 
+        // Per CSC API §11.5, scal defaults to "1" (hash-to-be-signed not linked to SAD).
+        String scal = dto.scal();
+        if (scal == null) {
+            scal = "1";
+        }
+
         CertificateReturnType certificateReturnType;
         try {
             certificateReturnType = resolveCertificateReturnType(dto.certificates());
@@ -69,7 +75,7 @@ public class CreateCredentialRequestMapper {
                 dto.userId(),
                 dto.signatureQualifier(),
                 numberOfSignaturesPerAuthorization,
-                dto.scal(),
+                scal,
                 dto.dn(),
                 dto.san(),
                 dto.description(),
