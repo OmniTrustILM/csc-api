@@ -29,7 +29,7 @@
         <version.testcontainers.postgresql>1.21.4</version.testcontainers.postgresql>
         <version.testcontainers.mysql>1.21.4</version.testcontainers.mysql>
         <version.testcontainers.toxiproxy>1.21.4</version.testcontainers.toxiproxy>
-        <version.testcontainers.keycloak>4.1.1</version.testcontainers.keycloak>
+        <version.testcontainers.keycloak>4.2.1</version.testcontainers.keycloak>
 
         <version.springdoc-openapi-maven-plugin>1.5</version.springdoc-openapi-maven-plugin>
 
