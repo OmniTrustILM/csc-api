@@ -24,7 +24,7 @@
         <version.postgresql>42.7.10</version.postgresql>
         <version.mysql>9.6.0</version.mysql>
         <version.instacio>5.5.1</version.instacio>
-        <version.testcontainers>1.21.4</version.testcontainers>
+        <version.testcontainers>2.0.5</version.testcontainers>
         <version.testcontainers.junit-jupiter>1.21.4</version.testcontainers.junit-jupiter>
         <version.testcontainers.postgresql>1.21.4</version.testcontainers.postgresql>
         <version.testcontainers.mysql>1.21.4</version.testcontainers.mysql>
