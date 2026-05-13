@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.czertainly</groupId>
-    <artifactId>signserver.csc</artifactId>
+    <artifactId>csc-api</artifactId>
     <version>1.6.0</version>
     <name>SignServer-CSC-API</name>
     <description>CSC API for Signserver</description>
@@ -33,9 +33,9 @@
 
         <version.springdoc-openapi-maven-plugin>1.5</version.springdoc-openapi-maven-plugin>
 
-        <sonar.organization>czertainly</sonar.organization>
+        <sonar.organization>ilm</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.projectKey>CZERTAINLY_CZERTAINLY-CSC-API</sonar.projectKey>
+        <sonar.projectKey>csc-api</sonar.projectKey>
     </properties>
     
     <dependencies>
