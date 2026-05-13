@@ -448,9 +448,9 @@ public class CredentialsService {
                         metadata.getUserId(),
                         metadata.getKeyAlias(),
                         metadata.getCredentialProfile(),
-                        Optional.of(metadata.getSignatureQualifier()),
+                        Optional.ofNullable(metadata.getSignatureQualifier()),
                         metadata.getMultisign(),
-                        Optional.of(metadata.getScal()),
+                        Optional.ofNullable(metadata.getScal()),
                         metadata.getCryptoTokenName(),
                         metadata.isDisabled()
                 ));

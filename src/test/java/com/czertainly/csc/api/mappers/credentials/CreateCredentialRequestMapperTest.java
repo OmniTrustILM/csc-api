@@ -168,6 +168,21 @@ class CreateCredentialRequestMapperTest {
     }
 
     @Test
+    void scalIsSetTo1WhenNull() {
+        // given
+        CreateCredentialDto dto = Instancio.of(CreateCredentialDto.class)
+                                           .ignore(field(CreateCredentialDto::scal))
+                                           .set(field(CreateCredentialDto::certificates), "single")
+                                           .create();
+
+        // when
+        CreateCredentialRequest request = mapper.map(dto);
+
+        // then
+        assertEquals("1", request.scal());
+    }
+
+    @Test
     void throwsOnInvalidCertificates() {
         // given
         CreateCredentialDto dto = Instancio.of(CreateCredentialDto.class)

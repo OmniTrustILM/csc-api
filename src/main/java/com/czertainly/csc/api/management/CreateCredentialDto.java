@@ -60,6 +60,7 @@ public record CreateCredentialDto(
                         - `2`: The hash to-be-signed is linked to the signature activation data.
                         """,
                 example = "1",
+                defaultValue = "1",
                 requiredMode = Schema.RequiredMode.NOT_REQUIRED
         )
         String scal,
