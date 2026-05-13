@@ -8,7 +8,7 @@ COPY docker /home/app/docker
 RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
 # Optimize stage
-FROM eclipse-temurin:21.0.10_7-jdk-alpine AS optimize
+FROM eclipse-temurin:25.0.3_9-jdk-alpine AS optimize
 
 COPY --from=build /home/app/target/*.jar /app/app.jar
 
