@@ -21,7 +21,7 @@
         <version.commons-text>1.15.0</version.commons-text>
         <version.springdoc>2.8.15</version.springdoc>
         <version.springdoc-openapi-ui>1.8.0</version.springdoc-openapi-ui>
-        <version.postgresql>42.7.10</version.postgresql>
+        <version.postgresql>42.7.11</version.postgresql>
         <version.mysql>9.6.0</version.mysql>
         <version.instacio>5.5.1</version.instacio>
         <version.testcontainers>1.21.4</version.testcontainers>
