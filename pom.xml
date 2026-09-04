@@ -19,7 +19,7 @@
         <version.bc>1.85</version.bc>
         <version.jjwt>0.13.0</version.jjwt>
         <version.commons-text>1.15.0</version.commons-text>
-        <version.springdoc>3.0.3</version.springdoc>
+        <version.springdoc>3.1.0</version.springdoc>
         <version.spring-retry>2.0.13</version.spring-retry>
         <version.mysql>26.7.0</version.mysql>
         <version.instacio>5.6.0</version.instacio>
