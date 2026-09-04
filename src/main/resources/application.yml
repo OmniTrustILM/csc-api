@@ -299,6 +299,20 @@ spring:
         username: 'cscuser'
         # Password to connect to the database
         password: 'your-strong-password'
+        # Passwordless authentication to Azure Database for PostgreSQL with a Microsoft Entra ID
+        # token from a workload identity. Set `username` to the Entra principal and remove
+        # `password`; a non-blank password silently falls back to password authentication. The
+        # authentication plugin is added to the connection URL automatically.
+        #
+        # Set `sslmode=verify-full` in the URL; the starter otherwise defaults to `sslmode=require`,
+        # which verifies neither certificate nor hostname. The default `sslfactory` takes its trust
+        # anchors only from the PEM file named by `sslrootcert`, never from the JVM truststore, and
+        # defaults it to a `~/.postgresql/root.crt` the container lacks: mount the Azure root CA
+        # there, or set `sslfactory=org.postgresql.ssl.DefaultJavaSSLFactory` for the JVM truststore.
+        # For example:
+        # url: jdbc:postgresql://myserver.postgres.database.azure.com:5432/cscdb?sslmode=verify-full&sslrootcert=/opt/cscapi/azure-root-ca.pem
+        # username: csc-api-identity
+        # azure: { passwordless-enabled: true }
         # Driver class name of the database
         # for PostgreSQL use: org.postgresql.Driver
         # for MySQL use: com.mysql.cj.jdbc.Driver

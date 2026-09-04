@@ -144,7 +144,8 @@ Renovate (`renovate.json`, `config:recommended`) opens update PRs. These rules k
   because `testcontainers-keycloak` is coupled to the TestContainers 2.0.x major (see below), so a
   BOM move to 3.x should break the build visibly here rather than at runtime in a test.
 - **Not BOM-managed at all**, so the `version.*` property is the only source: BouncyCastle, jjwt,
-  commons-text, springdoc, spring-retry, Instancio, testcontainers-keycloak, and the JaCoCo plugin.
+  commons-text, springdoc, spring-retry, Instancio, testcontainers-keycloak, WireMock, the JaCoCo
+  plugin, the Spring Cloud Azure starter, and its JDK HTTP transport.
 
 Notes on specific dependencies:
 
@@ -164,6 +165,17 @@ Notes on specific dependencies:
   `9.7.0`). A jump from 9.x to 26.x is expected, not a hijacked coordinate.
 - **`com.github.dasniko:testcontainers-keycloak`** hard-couples to a TestContainers major
   version (4.3.x requires 2.0.x), so the two move together.
+- **`org.wiremock:wiremock-standalone`** is test-scoped and stands in for the Microsoft Entra ID
+  token endpoint; it shades its own Jetty, so it cannot collide with the servlet container.
+- **`MockEntraTokenIssuer` is shaped by three Azure library constraints.** `IdentityClientOptions`
+  rejects a non-`https` authority host, so the stub mints a `localhost` certificate and serves TLS;
+  MSAL resolves an unknown authority against the real `login.microsoftonline.com`, so the
+  connection test names its own `azure.tokenCredentialProviderClassName` and disables instance
+  discovery; and azure-core caches every environment lookup process-wide, misses included, so the
+  federated token reaches `WorkloadIdentityCredentialBuilder.tokenFilePath` rather than
+  `AZURE_FEDERATED_TOKEN_FILE`, which one earlier read in the single Surefire JVM would pin empty
+  for good. It and `PasswordlessDataSourceConfigurationTest` name classes from non-public
+  `com.azure.*.implementation` packages, so a bump that relocates one breaks the build loudly.
 - **Outbound HTTP defaults are pinned explicitly**, not inherited. In `ServerConfiguration`,
   `getHttpClient` states `HostnameVerificationPolicy.CLIENT` with
   `HttpsSupport.getDefaultHostnameVerifier()`, and `setSoKeepAlive(false)`. httpclient5 5.6 changed
@@ -182,6 +194,27 @@ Notes on specific dependencies:
   `https` to `http` on the same host and port is no longer same-authority, so `Authorization`
   is stripped instead of forwarded. `IdpClient.downloadUserInfo` sets a bearer header per
   request, so a downgrade-redirecting IDP loses it rather than leaking it over cleartext.
+- **`com.azure.spring:spring-cloud-azure-starter-jdbc-postgresql`** pins its own
+  `version.spring-cloud-azure`, and the Spring Cloud Azure BOM is deliberately **not** imported:
+  Microsoft maps `spring-cloud-azure-dependencies` 7.4.0 to Spring Boot 4.0.x with no 4.1.x
+  mapping, and an imported BOM outranks the parent for everything it manages. Its
+  `azure-core-http-netty` transport is excluded in favour of `azure-core-http-jdk-httpclient`,
+  because Netty's `netty-tcnative-boringssl-static` and `netty-transport-native-epoll` are
+  glibc-linked and the runtime image is Alpine. Do not exclude the unused AMQP and management
+  subtrees it drags in: without `azure-core-management`, `AzureGlobalPropertiesAutoConfiguration`
+  has no `@ConditionalOnClass` guard and fails startup with `NoClassDefFoundError`; without
+  `azure-core-amqp`, startup is clean but reflection over the bound configuration properties throws
+  (actuator `configprops`, AOT, metadata tooling), latent only because that endpoint is not
+  exposed. No test here boots a fully auto-configured context, so `mvn package` catches neither.
+- **`version.azure-core-http-jdk-httpclient` and JNA hit the same nearest-wins hazard.** The
+  property sits at dependency depth 1, so its `azure-core:1.59.1` beats the `1.58.1` the starter
+  and `azure-identity` would resolve, governing the whole Azure stack. Separately,
+  `net.java.dev.jna:jna:5.18.1` reaches the *runtime* classpath through `testcontainers` →
+  `docker-java-transport-zerodep`, nearer than `azure-identity`'s own `jna:5.17.0` — a test-only
+  dependency choosing the JNA shipped in the production image, dormant only because JNA loads for
+  msal4j's persistent token cache, which neither credential path enables. Re-check with
+  `mvn dependency:tree -Dverbose` and `mvn dependency:list -DincludeScope=runtime` when either
+  moves.
 
 Keycloak's `admin-cli` client enables lightweight access tokens by default, and the userinfo
 endpoint rejects them. `IdpClientTest` turns that flag off during setup so it receives a full
@@ -212,18 +245,30 @@ SonarCloud gates on **new-code** coverage, so the ≥80% standard applies to new
 code; a change that adds no production lines satisfies it trivially. Raising the overall
 figure is separate, deliberate work — do not bundle it into an unrelated change, because it
 destroys the "tests unchanged and still green" signal that regression-free refactors rely on.
+SonarCloud must report **no issues** on the change, not merely a passing quality gate, and
+duplication must stay under 3%.
+
+## Working Documents
+
+Design specs and implementation plans under `docs/superpowers/` are gitignored local working
+documents; code, comments, commit messages and PR descriptions must never reference them.
 
 ## Quality Gate Before Pushing
 
 Run locally before opening a PR (GitHub Actions then run the authoritative SonarCloud and
 CodeQL checks):
 
-- `mvn clean package` — 569 tests, 0 failures. A changed test count means something was
-  silently skipped.
+- `mvn clean package` — 574 tests, 0 failures. A changed test count means something was
+  silently skipped, unless the change deliberately added tests.
 - `./scripts/sonar-local.sh` — ephemeral SonarQube smoke check reporting the quality gate,
-  duplication, and issues on changed files. Duplication must stay under 3%. An ephemeral
-  server has no new-code baseline, so SonarCloud on the PR is authoritative.
-- `copilot --allow-all-tools -p "..."` — an independent review pass on the diff.
+  duplication, and issues on changed files. An ephemeral server has no new-code baseline, so
+  SonarCloud on the PR is authoritative.
+- `copilot --allow-all-tools --model gpt-5.6-sol --effort max -p "..."` — an independent
+  review pass on the diff. Every change goes through this.
+
+The code itself must satisfy: no `TODO` or `FIXME` markers; no sensitive information such as
+credentials, tokens, internal hostnames or customer names; comments that are accurate and minimal,
+with no speculative notes or unrelated context; and small units with one clear purpose.
 
 Container vulnerability scanning is **not** run locally. The shared reusable workflows in
 `OmniTrustILM/.github` (`containers-test.yml`, `containers-build-and-push.yml`) enforce the
@@ -232,6 +277,11 @@ org-default Trivy policy. They read a repo-local Trivy config only when
 
 ## Commits & PRs
 
-Write a plain description of what changed — **no** co-author or attribution trailers, and
-**no** validation or quality-status lines (test counts, "BUILD SUCCESS", coverage numbers).
+Write a plain description of what changed, formatted as markdown, and nothing else: **no**
+co-author or attribution trailers and no mention of AI assistance, **no** validation or
+quality-status lines (test counts, "BUILD SUCCESS", coverage numbers), and **no** follow-up work,
+task lists, test plans or implementation plans. A PR description may link the issue it resolves.
+Squash the branch into a single commit before the **first** push; keep later changes as separate
+commits, so a reviewer can see what moved in response to their comments.
+
 Do not push or open a PR without maintainer approval.

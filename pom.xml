@@ -29,6 +29,16 @@
         <version.testcontainers.mysql>2.0.5</version.testcontainers.mysql>
         <version.testcontainers.toxiproxy>2.0.5</version.testcontainers.toxiproxy>
         <version.testcontainers.keycloak>4.3.1</version.testcontainers.keycloak>
+        <version.wiremock>3.13.1</version.wiremock>
+        <!-- Not managed by the Spring Boot parent. Microsoft maps Spring Cloud Azure 7.4.0 to
+             Spring Boot 4.0.x and publishes no mapping for 4.1.x, so the BOM is deliberately
+             not imported. Check `mvn dependency:tree` against the parent on every bump. -->
+        <version.spring-cloud-azure>7.4.0</version.spring-cloud-azure>
+        <!-- Replaces the excluded azure-core-http-netty transport. Declared at depth 1, so it
+             wins nearest-wins resolution for azure-core across the whole Azure stack: it must
+             never resolve azure-core behind the version spring-cloud-azure-starter-jdbc-postgresql
+             and azure-identity declare, or the rest of the stack is silently downgraded. -->
+        <version.azure-core-http-jdk-httpclient>1.1.7</version.azure-core-http-jdk-httpclient>
 
         <version.springdoc-openapi-maven-plugin>1.5</version.springdoc-openapi-maven-plugin>
         <version.jacoco-maven-plugin>0.8.15</version.jacoco-maven-plugin>
@@ -164,6 +174,22 @@
             <artifactId>mysql-connector-j</artifactId>
             <version>${version.mysql}</version>
         </dependency>
+        <dependency>
+            <groupId>com.azure.spring</groupId>
+            <artifactId>spring-cloud-azure-starter-jdbc-postgresql</artifactId>
+            <version>${version.spring-cloud-azure}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.azure</groupId>
+                    <artifactId>azure-core-http-netty</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-core-http-jdk-httpclient</artifactId>
+            <version>${version.azure-core-http-jdk-httpclient}</version>
+        </dependency>
 
         <dependency>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -232,6 +258,12 @@
             <groupId>com.github.dasniko</groupId>
             <artifactId>testcontainers-keycloak</artifactId>
             <version>${version.testcontainers.keycloak}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wiremock</groupId>
+            <artifactId>wiremock-standalone</artifactId>
+            <version>${version.wiremock}</version>
             <scope>test</scope>
         </dependency>
 
