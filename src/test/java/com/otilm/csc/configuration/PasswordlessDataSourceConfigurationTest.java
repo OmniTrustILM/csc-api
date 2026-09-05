@@ -42,6 +42,10 @@ class PasswordlessDataSourceConfigurationTest {
         String jdbcUrl = PasswordlessJdbcUrl.enhancedUrl();
         assertThat(jdbcUrl)
                 .contains("authenticationPluginClassName=" + PLUGIN_CLASS)
+                // The starter's own default for a URL that names no sslmode, pinned so that a
+                // change to it is noticed. It is not the mode to deploy with: `require` encrypts
+                // without authenticating the server, so the configuration documents `verify-full`,
+                // which needs a certificate authority only the operator can supply.
                 .contains("sslmode=require")
                 .contains("azure.managedIdentityEnabled=false")
                 .contains("azure.scopes=" + SCOPE);
