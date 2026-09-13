@@ -3,6 +3,7 @@ package com.otilm.csc.utils.cert;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -44,9 +45,23 @@ public class CertificateUtils {
      * @return a self signed X509Certificate
      */
     public static X509Certificate generateSelfSignedCertificate(String subjectDn) {
-        try {
-            KeyPair keyPair = generateKeyPair();
+        return generateSelfSignedCertificate(subjectDn, generateKeyPair(), null);
+    }
 
+    /**
+     * Generates a self-signed X.509 certificate for an existing key pair, optionally carrying a
+     * subject alternative name. Callers that need to serve TLS with the certificate need both:
+     * the private key, to configure the listener, and the SAN, because a hostname verifier only
+     * consults the common name when no SAN is present.
+     *
+     * @param subjectDn              the subject and issuer distinguished name
+     * @param keyPair                the key pair to certify and sign with
+     * @param subjectAlternativeName the subject alternative name, or {@code null} to omit it
+     * @return a self signed X509Certificate
+     */
+    public static X509Certificate generateSelfSignedCertificate(String subjectDn, KeyPair keyPair,
+                                                                GeneralNames subjectAlternativeName) {
+        try {
             X500Name subject = new X500Name(subjectDn);
             X500Name issuer = new X500Name(subjectDn);
             BigInteger serial = BigInteger.valueOf(System.currentTimeMillis());
@@ -60,6 +75,9 @@ public class CertificateUtils {
             );
 
             certBuilder.addExtension(Extension.basicConstraints, true, new BasicConstraints(false));
+            if (subjectAlternativeName != null) {
+                certBuilder.addExtension(Extension.subjectAlternativeName, false, subjectAlternativeName);
+            }
 
             ContentSigner signer = new JcaContentSignerBuilder("SHA256WithRSA").build(keyPair.getPrivate());
             X509CertificateHolder certHolder = certBuilder.build(signer);
