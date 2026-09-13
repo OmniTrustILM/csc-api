@@ -265,17 +265,29 @@ CodeQL checks):
   SonarCloud on the PR is authoritative.
 - `copilot --allow-all-tools --model gpt-5.6-sol --effort max -p "..."` — an independent
   review pass on the diff. Every change goes through this.
+- The `pr-hygiene` skill from the `OmniTrustILM/.github` repository — scans the added lines for
+  comment and log noise and applies the fixes you pick.
 
-The code itself must satisfy: no `TODO` or `FIXME` markers; no sensitive information such as
-credentials, tokens, internal hostnames or customer names; comments that are accurate and minimal,
-with no speculative notes or unrelated context; and small units with one clear purpose.
+The code itself must satisfy: the simplest solution that works, because complexity is what
+eventually fails; no `TODO` or `FIXME` markers; no sensitive information such as credentials,
+tokens, internal hostnames or customer names; comments that are accurate and minimal, with no
+speculative notes or unrelated context; and small units with one clear purpose.
 
 Container vulnerability scanning is **not** run locally. The shared reusable workflows in
 `OmniTrustILM/.github` (`containers-test.yml`, `containers-build-and-push.yml`) enforce the
 org-default Trivy policy. They read a repo-local Trivy config only when
 `allow-trivy-config-override: true` is passed, and no csc-api workflow passes it.
 
+## Review Feedback
+
+Address review comments — Copilot, CodeRabbit, or a person — and SonarCloud's new issues when
+they are valid, and push back with reasoning when they are not. Skip nitpicks: feedback that
+adds lines without making the code clearer costs more than it returns.
+
 ## Commits & PRs
+
+Every commit must be signed off for DCO (`git commit -s`). That `Signed-off-by` trailer is the
+only one permitted.
 
 Write a plain description of what changed, formatted as markdown, and nothing else: **no**
 co-author or attribution trailers and no mention of AI assistance, **no** validation or
