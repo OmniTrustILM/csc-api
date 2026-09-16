@@ -76,7 +76,7 @@ services:
 
   keycloak.csc.dev:
     container_name: csc-keycloak
-    image: quay.io/keycloak/keycloak:26.7.0
+    image: quay.io/keycloak/keycloak:26.7.4
     restart: always
     command: start-dev --log-level="INFO,com.otilm.csc:trace" --debug --verbose
     depends_on:
