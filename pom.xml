@@ -28,7 +28,7 @@
         <version.testcontainers.postgresql>2.0.5</version.testcontainers.postgresql>
         <version.testcontainers.mysql>2.0.5</version.testcontainers.mysql>
         <version.testcontainers.toxiproxy>2.0.5</version.testcontainers.toxiproxy>
-        <version.testcontainers.keycloak>4.3.1</version.testcontainers.keycloak>
+        <version.testcontainers.keycloak>4.4.0</version.testcontainers.keycloak>
 
         <version.springdoc-openapi-maven-plugin>1.5</version.springdoc-openapi-maven-plugin>
         <version.jacoco-maven-plugin>0.8.15</version.jacoco-maven-plugin>
