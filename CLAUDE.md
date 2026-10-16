@@ -258,7 +258,7 @@ documents; code, comments, commit messages and PR descriptions must never refere
 Run locally before opening a PR (GitHub Actions then run the authoritative SonarCloud and
 CodeQL checks):
 
-- `mvn clean package` — 574 tests, 0 failures. A changed test count means something was
+- `mvn clean package` — 575 tests, 0 failures. A changed test count means something was
   silently skipped, unless the change deliberately added tests.
 - `./scripts/sonar-local.sh` — ephemeral SonarQube smoke check reporting the quality gate,
   duplication, and issues on changed files. An ephemeral server has no new-code baseline, so
