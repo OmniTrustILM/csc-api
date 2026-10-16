@@ -28,7 +28,7 @@
         <version.testcontainers.postgresql>2.0.5</version.testcontainers.postgresql>
         <version.testcontainers.mysql>2.0.5</version.testcontainers.mysql>
         <version.testcontainers.toxiproxy>2.0.5</version.testcontainers.toxiproxy>
-        <version.testcontainers.keycloak>4.3.1</version.testcontainers.keycloak>
+        <version.testcontainers.keycloak>4.4.0</version.testcontainers.keycloak>
         <version.wiremock>3.13.1</version.wiremock>
         <!-- Not managed by the Spring Boot parent. Microsoft maps Spring Cloud Azure 7.4.0 to
              Spring Boot 4.0.x and publishes no mapping for 4.1.x, so the BOM is deliberately
