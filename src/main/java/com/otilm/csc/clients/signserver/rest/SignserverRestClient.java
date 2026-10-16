@@ -73,6 +73,7 @@ public class SignserverRestClient {
                                                        .body(workerProcessRequest)
                                                        .contentType(MediaType.APPLICATION_JSON)
                                                        .header("Authorization", basicAuthHeader)
+                                                       .header("X-Keyfactor-Requested-With", "csc-api")
                                                        .accept(MediaType.APPLICATION_JSON).retrieve()
                                                        .body(WorkerProcessResponse.class);
 
