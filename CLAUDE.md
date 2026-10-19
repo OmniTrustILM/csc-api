@@ -127,8 +127,8 @@ Renovate (`renovate.json`, `config:recommended`) opens update PRs. These rules k
 `pom.xml` sane:
 
 - **Do not pin what the Spring Boot BOM manages, unless you mean to move ahead of it.** `flyway`,
-  `snakeyaml`, `commons-lang3`, `httpclient5`, `httpcore5`, `logback`, `jackson` and `postgresql`
-  carry no `<version>` and move with the parent. A forward-pin silently becomes a *downgrade* once
+  `snakeyaml`, `commons-lang3`, `httpclient5`, `httpcore5`, `logback` and `postgresql` carry no
+  `<version>` and move with the parent. A forward-pin silently becomes a *downgrade* once
   the BOM catches up — `<tomcat.version>` was pinned to 11.0.22 ahead of the BOM and was removed
   when Spring Boot 4.1.0 began managing that exact version, and `version.postgresql` was dropped
   when 4.1.1 reached the 42.7.13 it had been holding.
@@ -137,8 +137,13 @@ Renovate (`renovate.json`, `config:recommended`) opens update PRs. These rules k
   fixes the BOM has not reached. `tomcat.version` is at 11.0.25 because CVE-2026-65905,
   CVE-2026-65182 and CVE-2026-68525 are fixed there and the GitHub Advisory Database scores all
   three critical from their CVSS vectors — Apache itself rates them Low, Important and Low, so the
-  pin exists to satisfy the scanners that gate CI, not because Apache calls them critical. Drop an
-  override the moment the BOM meets or passes it, or it turns into the downgrade above.
+  pin exists to satisfy the scanners that gate CI, not because Apache calls them critical.
+  `jackson-2-bom.version` and `jackson-bom.version` move the Jackson 2 and Jackson 3 trains from the
+  parent's 2.21.5 and 3.1.5 to 2.21.7 and 3.1.7, which fix CVE-2026-89407, CVE-2026-89425,
+  CVE-2026-68497, CVE-2026-91776 and CVE-2026-91777, all scored high and gated by Trivy on release
+  builds. Overriding the BOM properties moves each train as a whole; overriding single Jackson
+  artifacts would split it. Drop an override the moment the BOM meets or passes it, or it turns
+  into the downgrade above.
 - **`version.testcontainers*` are not overrides.** They pin 2.0.5, exactly what the
   `testcontainers-bom` imported by Spring Boot 4.1.1 already manages. They are held explicitly
   because `testcontainers-keycloak` is coupled to the TestContainers 2.0.x major (see below), so a
@@ -164,7 +169,7 @@ Notes on specific dependencies:
 - **`com.mysql:mysql-connector-j` uses calendar versioning** from `26.7.0` onward (it follows
   `9.7.0`). A jump from 9.x to 26.x is expected, not a hijacked coordinate.
 - **`com.github.dasniko:testcontainers-keycloak`** hard-couples to a TestContainers major
-  version (4.3.x requires 2.0.x), so the two move together.
+  version (4.4.x requires 2.0.x), so the two move together.
 - **`org.wiremock:wiremock-standalone`** is test-scoped and stands in for the Microsoft Entra ID
   token endpoint; it shades its own Jetty, so it cannot collide with the servlet container.
 - **`MockEntraTokenIssuer` is shaped by three Azure library constraints.** `IdentityClientOptions`
@@ -207,7 +212,7 @@ Notes on specific dependencies:
   (actuator `configprops`, AOT, metadata tooling), latent only because that endpoint is not
   exposed. No test here boots a fully auto-configured context, so `mvn package` catches neither.
 - **`version.azure-core-http-jdk-httpclient` and JNA hit the same nearest-wins hazard.** The
-  property sits at dependency depth 1, so its `azure-core:1.59.1` beats the `1.58.1` the starter
+  property sits at dependency depth 1, so its `azure-core:1.60.0` beats the `1.58.1` the starter
   and `azure-identity` would resolve, governing the whole Azure stack. Separately,
   `net.java.dev.jna:jna:5.18.1` reaches the *runtime* classpath through `testcontainers` →
   `docker-java-transport-zerodep`, nearer than `azure-identity`'s own `jna:5.17.0` — a test-only
@@ -225,7 +230,7 @@ access token, as a real IDP client would.
 All three `Dockerfile` stages contribute to the published image, but they carry very different
 vulnerability weight:
 
-- **`build`** (`maven:3.9.x-eclipse-temurin-21`) produces the jar, and the final stage also
+- **`build`** (`maven:3.10.x-eclipse-temurin-21-noble`) produces the jar, and the final stage also
   copies the `docker/` tree out of it. Nothing from the Maven image's own filesystem or packages
   reaches the published image, so this tag moves on convenience, not urgency.
 - **`optimize`** (`eclipse-temurin:21.0.x_y-jdk-alpine`) is the one that matters most. Its

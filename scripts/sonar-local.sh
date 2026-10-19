@@ -24,10 +24,10 @@ SONAR_PORT="${SONAR_PORT:-9000}"
 PROJECT_KEY="csc-api"
 SONAR_URL="http://localhost:${SONAR_PORT}"
 MAX_DUPLICATION="${MAX_DUPLICATION:-3}"
-SONAR_PLUGIN_VERSION="${SONAR_PLUGIN_VERSION:-5.7.0.6970}"
+SONAR_PLUGIN_VERSION="${SONAR_PLUGIN_VERSION:-5.8.0.7211}"
 # Pinned so the analyser version cannot change under the script without a diff. Override with
 # SONAR_IMAGE to try a different release.
-SONAR_IMAGE="${SONAR_IMAGE:-sonarqube:26.7.0.124771-community}"
+SONAR_IMAGE="${SONAR_IMAGE:-sonarqube:26.9.0.129388-community}"
 
 cleanup() {
     echo "Stopping SonarQube..."
