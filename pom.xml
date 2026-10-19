@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.otilm</groupId>
     <artifactId>csc-api</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0</version>
     <name>csc-api</name>
     <description>CSC API for Signserver</description>
     <properties>
