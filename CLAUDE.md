@@ -127,8 +127,8 @@ Renovate (`renovate.json`, `config:recommended`) opens update PRs. These rules k
 `pom.xml` sane:
 
 - **Do not pin what the Spring Boot BOM manages, unless you mean to move ahead of it.** `flyway`,
-  `snakeyaml`, `commons-lang3`, `httpclient5`, `httpcore5`, `logback`, `jackson` and `postgresql`
-  carry no `<version>` and move with the parent. A forward-pin silently becomes a *downgrade* once
+  `snakeyaml`, `commons-lang3`, `httpclient5`, `httpcore5`, `logback` and `postgresql` carry no
+  `<version>` and move with the parent. A forward-pin silently becomes a *downgrade* once
   the BOM catches up — `<tomcat.version>` was pinned to 11.0.22 ahead of the BOM and was removed
   when Spring Boot 4.1.0 began managing that exact version, and `version.postgresql` was dropped
   when 4.1.1 reached the 42.7.13 it had been holding.
@@ -137,8 +137,13 @@ Renovate (`renovate.json`, `config:recommended`) opens update PRs. These rules k
   fixes the BOM has not reached. `tomcat.version` is at 11.0.25 because CVE-2026-65905,
   CVE-2026-65182 and CVE-2026-68525 are fixed there and the GitHub Advisory Database scores all
   three critical from their CVSS vectors — Apache itself rates them Low, Important and Low, so the
-  pin exists to satisfy the scanners that gate CI, not because Apache calls them critical. Drop an
-  override the moment the BOM meets or passes it, or it turns into the downgrade above.
+  pin exists to satisfy the scanners that gate CI, not because Apache calls them critical.
+  `jackson-2-bom.version` and `jackson-bom.version` move the Jackson 2 and Jackson 3 trains from the
+  parent's 2.21.5 and 3.1.5 to 2.21.7 and 3.1.7, which fix CVE-2026-89407, CVE-2026-89425,
+  CVE-2026-68497, CVE-2026-91776 and CVE-2026-91777, all scored high and gated by Trivy on release
+  builds. Overriding the BOM properties moves each train as a whole; overriding single Jackson
+  artifacts would split it. Drop an override the moment the BOM meets or passes it, or it turns
+  into the downgrade above.
 - **`version.testcontainers*` are not overrides.** They pin 2.0.5, exactly what the
   `testcontainers-bom` imported by Spring Boot 4.1.1 already manages. They are held explicitly
   because `testcontainers-keycloak` is coupled to the TestContainers 2.0.x major (see below), so a

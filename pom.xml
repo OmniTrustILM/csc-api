@@ -46,6 +46,10 @@
         <!-- Overrides the version managed by the Spring Boot parent, which is 11.0.24.
              Remove once the parent manages 11.0.25 or later. -->
         <tomcat.version>11.0.25</tomcat.version>
+        <!-- Override the Jackson 2 and Jackson 3 trains managed by the Spring Boot parent, which are
+             2.21.5 and 3.1.5. Remove once the parent manages 2.21.7 and 3.1.7 or later. -->
+        <jackson-2-bom.version>2.21.7</jackson-2-bom.version>
+        <jackson-bom.version>3.1.7</jackson-bom.version>
 
         <sonar.organization>ilm</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
