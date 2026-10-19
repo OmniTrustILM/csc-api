@@ -164,7 +164,7 @@ Notes on specific dependencies:
 - **`com.mysql:mysql-connector-j` uses calendar versioning** from `26.7.0` onward (it follows
   `9.7.0`). A jump from 9.x to 26.x is expected, not a hijacked coordinate.
 - **`com.github.dasniko:testcontainers-keycloak`** hard-couples to a TestContainers major
-  version (4.3.x requires 2.0.x), so the two move together.
+  version (4.4.x requires 2.0.x), so the two move together.
 - **`org.wiremock:wiremock-standalone`** is test-scoped and stands in for the Microsoft Entra ID
   token endpoint; it shades its own Jetty, so it cannot collide with the servlet container.
 - **`MockEntraTokenIssuer` is shaped by three Azure library constraints.** `IdentityClientOptions`
@@ -207,7 +207,7 @@ Notes on specific dependencies:
   (actuator `configprops`, AOT, metadata tooling), latent only because that endpoint is not
   exposed. No test here boots a fully auto-configured context, so `mvn package` catches neither.
 - **`version.azure-core-http-jdk-httpclient` and JNA hit the same nearest-wins hazard.** The
-  property sits at dependency depth 1, so its `azure-core:1.59.1` beats the `1.58.1` the starter
+  property sits at dependency depth 1, so its `azure-core:1.60.0` beats the `1.58.1` the starter
   and `azure-identity` would resolve, governing the whole Azure stack. Separately,
   `net.java.dev.jna:jna:5.18.1` reaches the *runtime* classpath through `testcontainers` →
   `docker-java-transport-zerodep`, nearer than `azure-identity`'s own `jna:5.17.0` — a test-only
@@ -225,7 +225,7 @@ access token, as a real IDP client would.
 All three `Dockerfile` stages contribute to the published image, but they carry very different
 vulnerability weight:
 
-- **`build`** (`maven:3.9.x-eclipse-temurin-21`) produces the jar, and the final stage also
+- **`build`** (`maven:3.10.x-eclipse-temurin-21-noble`) produces the jar, and the final stage also
   copies the `docker/` tree out of it. Nothing from the Maven image's own filesystem or packages
   reaches the published image, so this tag moves on convenience, not urgency.
 - **`optimize`** (`eclipse-temurin:21.0.x_y-jdk-alpine`) is the one that matters most. Its
