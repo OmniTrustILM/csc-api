@@ -41,7 +41,7 @@
         <version.azure-core-http-jdk-httpclient>1.2.0</version.azure-core-http-jdk-httpclient>
 
         <version.springdoc-openapi-maven-plugin>1.5</version.springdoc-openapi-maven-plugin>
-        <version.jacoco-maven-plugin>0.8.15</version.jacoco-maven-plugin>
+        <version.jacoco-maven-plugin>0.8.16</version.jacoco-maven-plugin>
 
         <!-- Overrides the version managed by the Spring Boot parent, which is 11.0.24.
              Remove once the parent manages 11.0.25 or later. -->
